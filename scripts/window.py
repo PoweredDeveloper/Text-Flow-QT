@@ -4,69 +4,82 @@ from PySide6.QtWidgets import *
 from PySide6.QtGui import *
 
 from .paths import *
+from .editor import Editor
+from .utils import create_action
 
 class Window(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
-        
+
         # Initializing Window
         self.setWindowTitle("Text Flow")
-        self.setFixedSize(1200, 800)
+        self.setFixedSize(720, 480)
 
-        self.init_menubar()
+        self.editor = Editor()
+        self.initUI()
 
-    def init_menubar(self) -> None:
-        # File Menu
-        newAction = QAction(QIcon(ICON_FILE), 'New File', self)
-        newAction.setShortcut('Ctrl+N')
-        newAction.setStatusTip('Create a new text file')
-        newAction.triggered.connect(lambda: print('new'))
+        self.setCentralWidget(QWidget())
+        main_layout = QGridLayout()
 
-        openAction = QAction(QIcon(ICON_OPEN), 'Open File', self)
-        openAction.setShortcut('Ctrl+O')
-        openAction.setStatusTip('Opens a file')
-        openAction.triggered.connect(lambda: print('open'))
+        main_layout.addWidget(self.editor, 0, 0, 1, 2)
 
-        saveAction = QAction(QIcon(ICON_SAVE), 'Save', self)
-        saveAction.setShortcut('Ctrl+S')
-        saveAction.setStatusTip('Save created file')
-        saveAction.triggered.connect(lambda: print('save'))
+        main_layout.setColumnStretch(0, 1)
+        main_layout.setColumnStretch(1, 3)
+        self.centralWidget().setLayout(main_layout)
 
-        saveAsAction = QAction(QIcon(ICON_SAVE_AS), 'Save As', self)
-        saveAsAction.setShortcut('Ctrl+Shift+S')
-        saveAsAction.setStatusTip('Save created file as...')
-        saveAsAction.triggered.connect(lambda: print('save as'))
+    def initUI(self) -> None:
+        actions = {
+            'file': {
+                'new': create_action(ICON_FILE, 'New File', lambda: print('new'), self, QKeySequence.StandardKey.New, 'Create a new text file'),
+                'open': create_action(ICON_OPEN, 'Open File', lambda: print('open'), self, QKeySequence.StandardKey.Open, 'Opens a file'),
+                'save': create_action(ICON_SAVE, 'Save', lambda: print('save'), self, QKeySequence.StandardKey.Save, 'Save created file'),
+                'saveas': create_action(ICON_SAVE_AS, 'Save As', lambda: print('save as'), self, QKeySequence.StandardKey.SaveAs, 'Save created file as new'),
+                'exit': create_action(ICON_RED_CROSS, 'Exit', self.close, self, 'Ctrl+Q', 'Exit application without saving')
+            },
+            'edit': {
+                'undo': create_action(ICON_UNDO, 'Undo', self.editor.undo, self, QKeySequence.StandardKey.Undo),
+                'redo': create_action(ICON_REDO, 'Redo', self.editor.redo, self, QKeySequence.StandardKey.Redo),
+                'copy': create_action(ICON_COPY, 'Copy', self.editor.copy, self, QKeySequence.StandardKey.Copy),
+                'paste': create_action(ICON_PASTE, 'Paste', self.editor.paste, self, QKeySequence.StandardKey.Paste),
+                'cut': create_action(ICON_CUT, 'Cut', self.editor.cut, self, QKeySequence.StandardKey.Cut),
+                'select_all': create_action(ICON_SELECT_ALL, 'Select All', self.editor.selectAll, self, QKeySequence.StandardKey.SelectAll)
+            },
+            'view': {
+                'darkmode': create_action(ICON_LIGHT, 'Toggle Dark Mode', lambda: print('Toggle dark mode'), self, tooltip = 'Toggles dark mode'),
+                'wrap': create_action(ICON_WRAP, 'Wrap to Window', self.editor.toggle_wrap, self, tooltip = 'Wraps text to window')
+            },
+            'about': {
+                'github': create_action(ICON_GITHUB, 'Github Link', lambda: webbrowser.open('https://github.com/PoweredDeveloper/Text-Flow-QT'), self, tooltip = 'Sends you to github repository')
+            }
+        }
 
-        exitAction = QAction(QIcon(ICON_RED_CROSS), 'Exit', self)
-        exitAction.setShortcut('Ctrl+Q')
-        exitAction.setStatusTip('Exit application without saving')
-        exitAction.triggered.connect(self.close)
-
-        # View
-        darkModeAction = QAction(QIcon(ICON_SUN), 'Toggle Dark Mode', self)
-        exitAction.setShortcut('Ctrl+D')
-        darkModeAction.setStatusTip('Toggles dark mode')
-        darkModeAction.triggered.connect(lambda: print('Toggle dark mode'))
-
-        # About Menu
-        githubAction = QAction(QIcon(ICON_GITHUB), 'Github Link', self)
-        githubAction.setStatusTip('Sends you to github repository')
-        githubAction.triggered.connect(lambda: webbrowser.open('https://github.com/PoweredDeveloper'))
+        separators: dict[str, list[int]] = {
+            'file': [1, 3],
+            'edit': [1, 4],
+            'view': [],
+            'about': []
+        }
 
         # Menubar
         menubar = self.menuBar()
-        fileMenu = menubar.addMenu('File')
-        fileMenu.addAction(newAction)
-        fileMenu.addSeparator()
-        fileMenu.addAction(openAction)
-        fileMenu.addSeparator()
-        fileMenu.addAction(saveAction)
-        fileMenu.addAction(saveAsAction)
-        fileMenu.addSeparator()
-        fileMenu.addAction(exitAction)
+        for menu in actions.keys():
+            menu_tab = menubar.addMenu(menu[0].capitalize() + menu[1:])
+            for index, action in enumerate(actions[menu].values()):
+                menu_tab.addAction(action)
+                if separators[menu].count(index) > 0:
+                    menu_tab.addSeparator()
+                
 
-        viewMenu = menubar.addMenu('View')
-        viewMenu.addAction(darkModeAction)
+    def toolbar(self) -> QHBoxLayout:
+        toolbar_layout = QHBoxLayout()
 
-        aboutMenu = menubar.addMenu('About')
-        aboutMenu.addAction(githubAction)
+        bold_button = QPushButton(QIcon(ICON_BOLD), '')
+        italic_button = QPushButton(QIcon(ICON_ITALIC), '')
+        underline_button = QPushButton(QIcon(ICON_UNDERLINE), '')
+
+        toolbar_layout.addWidget(bold_button)
+        toolbar_layout.addWidget(italic_button)
+        toolbar_layout.addWidget(underline_button)
+        toolbar_layout.addStretch()
+
+        return toolbar_layout
