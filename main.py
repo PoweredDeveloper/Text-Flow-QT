@@ -1,3 +1,9 @@
+#
+# ============== TEXT FLOW ==============
+# Script written by Istomin Mikhail
+# Powered Developer <https://github.com/PoweredDeveloper>
+#
+
 import sys
 from PySide6 import QtWidgets
 
