@@ -12,6 +12,7 @@ from scripts import Window
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = Window()
+    window.resize(720, 480)
     window.show()
 
     sys.exit(app.exec())
