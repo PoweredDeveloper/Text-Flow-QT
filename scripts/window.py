@@ -10,11 +10,7 @@ import re
 from PySide6.QtWidgets import *
 from PySide6.QtGui import *
 from PySide6.QtCore import *
-<<<<<<< HEAD
-=======
 from PySide6.QtPrintSupport import *
->>>>>>> 7a645c0 (😊 New Update [Print Added])
-
 from .paths import *
 from .editor import Editor
 from .utils import create_action
@@ -69,10 +65,7 @@ class Window(QMainWindow):
                 'open': create_action(ICON_OPEN, 'Open File', self.open_file, self, QKeySequence.StandardKey.Open, 'Opens a file'),
                 'save': create_action(ICON_SAVE, 'Save', self.save, self, QKeySequence.StandardKey.Save, 'Save created file'),
                 'saveas': create_action(ICON_SAVE_AS, 'Save As', self.save_as, self, QKeySequence.StandardKey.SaveAs, 'Save created file as new'),
-<<<<<<< HEAD
-=======
                 'print': create_action(ICON_PRINT, 'Print', self.print_document, self, QKeySequence.StandardKey.Print, 'Print Document'),
->>>>>>> 7a645c0 (😊 New Update [Print Added])
                 'exit': create_action(ICON_RED_CROSS, 'Exit', self.close, self, 'Ctrl+Q', 'Exit application without saving')
             },
             'edit': {
@@ -238,8 +231,6 @@ class Window(QMainWindow):
             self.saved = True
             self.update_title()
 
-<<<<<<< HEAD
-=======
     def print_document(self):
         printer = QPrinter(mode = QPrinter.PrinterMode.HighResolution)
         printer.setPageSize(QPageSize.PageSizeId.A4)
@@ -248,8 +239,7 @@ class Window(QMainWindow):
         if dialog.exec() == QPrintDialog.Accepted:
             current_widget = self.editor
             current_widget.print_(printer)
-
->>>>>>> 7a645c0 (😊 New Update [Print Added])
+            
     def update_title(self) -> None:
         self.setWindowTitle(f'{os.path.basename(self.path) if self.path != '' else 'Untitled'}{'*' if not self.saved else ''} - Text Flow')
 
