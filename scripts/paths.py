@@ -16,10 +16,7 @@ ICON_FILE = os.path.join(MENUBAR_ICONS_PATH, 'file.png')
 ICON_OPEN = os.path.join(MENUBAR_ICONS_PATH, 'open.png')
 ICON_SAVE = os.path.join(MENUBAR_ICONS_PATH, 'save.png')
 ICON_SAVE_AS = os.path.join(MENUBAR_ICONS_PATH, 'save_as.png')
-<<<<<<< HEAD
-=======
 ICON_PRINT = os.path.join(MENUBAR_ICONS_PATH, 'printer.png')
->>>>>>> 7a645c0 (😊 New Update [Print Added])
 ICON_RED_CROSS = os.path.join(MENUBAR_ICONS_PATH, 'red_cross.png')
 
 ICON_UNDO = os.path.join(MENUBAR_ICONS_PATH, 'undo.png')
